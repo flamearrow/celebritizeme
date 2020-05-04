@@ -3,4 +3,7 @@
 
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="error_gif">error</string>
+    <string name="celebritizeme">CelebritizeMe</string>
+    <string name="share">share</string>
 </resources>
