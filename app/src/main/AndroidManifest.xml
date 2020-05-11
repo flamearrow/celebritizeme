@@ -29,6 +29,8 @@
         <activity
             android:name="band.mlgb.celebritizeme.ResultActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity
+            android:name="band.mlgb.celebritizeme.GalleryActivity"/>
     </application>
     <dist:module dist:instant="true" />
 </manifest>
