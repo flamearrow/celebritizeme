@@ -7,10 +7,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import band.mlgb.celebritizeme.images.restoreRotation
 import band.mlgb.celebritizeme.images.toRoundedDrawable
-import band.mlgb.celebritizeme.net.CelebritizeMeApi
 import band.mlgb.celebritizeme.net.HalfPlusTwoRequest
 import band.mlgb.celebritizeme.net.HalfPlusTwoResponse
 import com.bumptech.glide.Glide
@@ -20,37 +18,28 @@ import kotlinx.android.synthetic.main.activity_fullscreen.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-class FullscreenActivity : AppCompatActivity() {
+class FullscreenActivity : CelebritizeMeBaseActivity() {
 
-    lateinit var api: CelebritizeMeApi;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_fullscreen)
-
-        // Set up retrofit
-        val retrofit = Retrofit.Builder().baseUrl("http://10.0.0.189:8501")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        api = retrofit.create(CelebritizeMeApi::class.java)
+        (application as CelebritizeMeApp).celebritizeMeComponent.inject(this)
     }
 
 
     fun celebritize(view: View) {
-//        Toast.makeText(this, "celebritize", Toast.LENGTH_SHORT).show()
         api.requestHalfPlusTwo(HalfPlusTwoRequest(listOf(1.0f, 2.0f)))
             .enqueue(object : Callback<HalfPlusTwoResponse> {
                 override fun onFailure(call: Call<HalfPlusTwoResponse>, t: Throwable) {
-                    Toast.makeText(this@FullscreenActivity, "failure", Toast.LENGTH_SHORT).show()
-                    throw t
+                    Toast.makeText(this@FullscreenActivity, "server failure", Toast.LENGTH_SHORT)
+                        .show()
                 }
 
                 override fun onResponse(

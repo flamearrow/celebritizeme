@@ -3,9 +3,8 @@ package band.mlgb.celebritizeme
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 
-class ResultActivity : AppCompatActivity() {
+class ResultActivity : CelebritizeMeBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
