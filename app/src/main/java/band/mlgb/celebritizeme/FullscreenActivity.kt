@@ -2,18 +2,26 @@ package band.mlgb.celebritizeme
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import band.mlgb.celebritizeme.images.restoreRotation
 import band.mlgb.celebritizeme.images.toRoundedDrawable
+import band.mlgb.celebritizeme.net.CelebritizeMeApi
+import band.mlgb.celebritizeme.net.HalfPlusTwoRequest
+import band.mlgb.celebritizeme.net.HalfPlusTwoResponse
 import com.bumptech.glide.Glide
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.features.ReturnMode
 import kotlinx.android.synthetic.main.activity_fullscreen.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 
 /**
@@ -22,21 +30,51 @@ import java.io.File
  */
 class FullscreenActivity : AppCompatActivity() {
 
+    lateinit var api: CelebritizeMeApi;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_fullscreen)
+
+        // Set up retrofit
+        val retrofit = Retrofit.Builder().baseUrl("http://10.0.0.189:8501")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        api = retrofit.create(CelebritizeMeApi::class.java)
     }
 
 
     fun celebritize(view: View) {
-        Toast.makeText(this, "celebritize", Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, "celebritize", Toast.LENGTH_SHORT).show()
+        api.requestHalfPlusTwo(HalfPlusTwoRequest(listOf(1.0f, 2.0f)))
+            .enqueue(object : Callback<HalfPlusTwoResponse> {
+                override fun onFailure(call: Call<HalfPlusTwoResponse>, t: Throwable) {
+                    Toast.makeText(this@FullscreenActivity, "failure", Toast.LENGTH_SHORT).show()
+                    throw t
+                }
 
-        Intent(this, ResultActivity::class.java).let {
-            val bitmap: Bitmap? = null
-            it.putExtra(RESULT_IMAGE, "MLGB")
-            startActivity(it)
-        }
+                override fun onResponse(
+                    call: Call<HalfPlusTwoResponse>,
+                    response: Response<HalfPlusTwoResponse>
+                ) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@FullscreenActivity, "yay", Toast.LENGTH_SHORT).show()
+                        response.body()?.let {
+                            for (i in it.instances) {
+                                Log.d("MLGB", "result: " + i)
+                            }
+                        }
+                    } else {
+                        Toast.makeText(this@FullscreenActivity, "ouch", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            })
+//        Intent(this, ResultActivity::class.java).let {
+//            val bitmap: Bitmap? = null
+//            it.putExtra(RESULT_IMAGE, "MLGB")
+//            startActivity(it)
+//        }
 
     }
 
